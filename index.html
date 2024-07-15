@@ -3,145 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro ASCLEPIO</title>
+    <title>Registro con Firebase</title>
     <style>
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes expand {
-            0% { background-color: rgba(255, 255, 255, 0); }
-            100% { background-color: rgba(255, 255, 255, 1); }
-        }
         body {
-            margin: 0;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: #000;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
+            background-color: #fff;
+            margin: 0;
         }
         .container {
-            background: #333;
+            background-color: #fff;
             padding: 20px;
-            border-radius: 16px;
-            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 300px;
-            box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.4);
-            animation: fadeIn 1s ease-out;
+            position: relative;
+            text-align: center;
+        }
+        h2 {
+            margin-top: 0;
+            color: #000;
         }
         .logo {
             font-size: 24px;
+            font-weight: bold;
             margin-bottom: 20px;
         }
-        input[type="text"], input[type="email"], input[type="password"], select {
-            width: calc(100% - 20px);
+        input[type="text"], input[type="password"] {
+            width: 100%;
             padding: 10px;
             margin: 10px 0;
-            border: none;
-            border-radius: 8px;
-            background: #555;
-            color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
         button {
             width: 100%;
             padding: 10px;
-            margin: 10px 0;
             border: none;
-            border-radius: 16px;
-            background: #fff;
-            color: #000;
+            border-radius: 4px;
+            background-color: #000;
+            color: #fff;
             font-size: 16px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
-        .error {
+        button:hover {
+            background-color: #333;
+        }
+        .message {
             color: red;
-            margin-top: 10px;
         }
-        .success-screen {
+        .link {
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+        }
+        .overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background-color: #000;
+            color: #fff;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            background-color: rgba(255, 255, 255, 0);
-            animation: expand 1s forwards;
+            transition: opacity 1s;
         }
-        .success-message {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #000;
+        .overlay-content {
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s;
         }
-        .success-button {
+        .overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        .overlay-content.show {
+            opacity: 1;
+        }
+        .overlay-button {
             padding: 10px 20px;
             border: none;
-            border-radius: 16px;
-            background: #000;
-            color: #fff;
-            font-size: 14px;
+            border-radius: 4px;
+            background-color: #fff;
+            color: #000;
+            font-size: 16px;
             cursor: pointer;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">ASCLEPIO</div>
-        <input type="text" id="name" placeholder="Nombres y Apellidos" required>
-        <input type="email" id="email" placeholder="Correo Electrónico" required>
-        <select id="education" required>
-            <option value="">Nivel Educativo</option>
-            <option value="Estudiante">Estudiante</option>
-            <option value="Técnico">Técnico</option>
-            <option value="Tecnólogo">Tecnólogo</option>
-            <option value="Profesional">Profesional</option>
-            <option value="Residente">Residente</option>
-            <option value="Doctorado">Doctorado</option>
-        </select>
-        <input type="password" id="password" placeholder="Contraseña" required>
-        <input type="password" id="confirm_password" placeholder="Confirmar Contraseña" required>
-        <button id="submit_button">Continuar</button>
-        <div class="error" id="error_message"></div>
+        <div class="logo">A S C L E P I O</div>
+        <h2>Registro</h2>
+        <input type="text" id="register-email" placeholder="Correo electrónico">
+        <input type="password" id="register-password" placeholder="Contraseña">
+        <button onclick="register()">Registrar</button>
+        <p class="message" id="register-message"></p>
     </div>
-    <div class="success-screen" id="success_screen">
-        <div class="success-message" id="success_message"></div>
-        <button class="success-button" onclick="window.location.href='https://sites.google.com/view/asclepiocomunidad/iniciar-sesi%C3%B3n'">Iniciar sesión</button>
+
+    <!-- Contenedor para la animación de desvanecimiento -->
+    <div id="overlay" class="overlay">
+        <div class="overlay-content">
+            <button class="overlay-button" onclick="location.href='https://sites.google.com/view/asclepiomiembros/p%C3%A1gina-principal'">Iniciar sesión</button>
+            <p>Ya eres parte de la comunidad ASCLEPIO.</p>
+        </div>
     </div>
-    <script>
-        document.getElementById('submit_button').addEventListener('click', async function() {
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const education = document.getElementById('education').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm_password').value;
-            const errorMessage = document.getElementById('error_message');
 
-            if (password !== confirmPassword) {
-                errorMessage.textContent = 'Las contraseñas no coinciden';
-                return;
-            }
+    <!-- Agrega el script de Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
 
-            const response = await fetch('https://script.google.com/macros/s/AKfycbx8sW9Umcv8p2dVuAcV7a-Qqi2vtBXOcdKgEwXekIsSEFiV-XLmLwHcmB4NmbFLRMsJpw/exec', {
-                method: 'POST',
-                body: JSON.stringify({ name, email, education, password }),
-            });
+        // Tu configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhUyDQHm4rYrmN0AMh_Jw_WIo0Nev-Kas",
+            authDomain: "asclepiouser-120dc.firebaseapp.com",
+            projectId: "asclepiouser-120dc",
+            storageBucket: "asclepiouser-120dc.appspot.com",
+            messagingSenderId: "91797934913",
+            appId: "1:91797934913:web:f6634127f41f95898e87c0",
+            measurementId: "G-JZZFMW9H6Z"
+        };
 
-            if (response.ok) {
-                document.querySelector('.container').style.display = 'none';
-                const successScreen = document.getElementById('success_screen');
-                const successMessage = document.getElementById('success_message');
-                successMessage.textContent = `${name}, ya eres parte de la comunidad ASCLEPIO. Te damos la bienvenida.`;
-                successScreen.style.display = 'flex';
-            } else {
-                errorMessage.textContent = 'Hubo un error al registrar los datos.';
-            }
-        });
+        // Inicializa Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Función para registrar un nuevo usuario
+        window.register = function() {
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const messageElement = document.getElementById('register-message');
+            const overlay = document.getElementById('overlay');
+            const overlayContent = document.querySelector('.overlay-content');
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Mostrar la animación de desvanecimiento
+                    document.querySelector('.container').style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.classList.add('show');
+                        overlayContent.classList.add('show');
+                    }, 1000); // Tiempo para el desvanecimiento
+                })
+                .catch((error) => {
+                    messageElement.textContent = `Error: ${error.message}`;
+                });
+        }
     </script>
 </body>
 </html>
