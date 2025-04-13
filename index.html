@@ -4,64 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro con Firebase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #000;
+            --secondary-color: #fff;
+            --accent-color: #4a90e2;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #333;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #fff;
+            min-height: 100vh;
+            background-color: var(--light-gray);
             margin: 0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.02) 90%);
         }
+        
         .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            background-color: var(--secondary-color);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            width: 380px;
             position: relative;
             text-align: center;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        h2 {
-            margin-top: 0;
-            color: #000;
+        
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
         }
+        
         .logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
         }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        h2 {
+            margin: 0 0 30px 0;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 24px;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
         input[type="text"], input[type="password"] {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 15px 15px 15px 45px;
+            margin: 0;
+            border: 1px solid var(--medium-gray);
+            border-radius: 6px;
             box-sizing: border-box;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: var(--light-gray);
         }
+        
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+            background-color: var(--secondary-color);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-gray);
+            font-size: 18px;
+        }
+        
         button {
             width: 100%;
-            padding: 10px;
+            padding: 15px;
             border: none;
-            border-radius: 4px;
-            background-color: #000;
-            color: #fff;
+            border-radius: 6px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #333;
-        }
-        .message {
-            color: red;
-        }
-        .link {
+            transition: all 0.3s ease;
             margin-top: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        button:hover {
+            background-color: var(--dark-gray);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message {
+            color: var(--error-color);
+            margin: 15px 0;
+            font-size: 14px;
+            min-height: 20px;
+        }
+        
+        .link {
+            margin-top: 20px;
             display: block;
             text-align: center;
+            color: var(--dark-gray);
+            font-size: 14px;
         }
+        
+        .link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        .link a:hover {
+            color: var(--dark-gray);
+            text-decoration: underline;
+        }
+        
         .overlay {
             display: none;
             position: fixed;
@@ -69,33 +163,81 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #000;
-            color: #fff;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: var(--secondary-color);
             justify-content: center;
             align-items: center;
-            transition: opacity 1s;
+            transition: opacity 0.8s;
+            z-index: 1000;
         }
+        
         .overlay-content {
             text-align: center;
             opacity: 0;
-            transition: opacity 1s;
+            transition: opacity 0.8s, transform 0.8s;
+            transform: translateY(20px);
+            max-width: 500px;
+            padding: 40px;
         }
+        
         .overlay.show {
             display: flex;
             opacity: 1;
         }
+        
         .overlay-content.show {
             opacity: 1;
+            transform: translateY(0);
         }
+        
+        .overlay-logo {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+        
+        .overlay-message {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
         .overlay-button {
-            padding: 10px 20px;
+            padding: 15px 30px;
             border: none;
-            border-radius: 4px;
-            background-color: #fff;
-            color: #000;
+            border-radius: 6px;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .overlay-button:hover {
+            background-color: var(--light-gray);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
@@ -103,17 +245,36 @@
     <div class="container">
         <div class="logo">A S C L E P I O</div>
         <h2>Registro</h2>
-        <input type="text" id="register-email" placeholder="Correo electrónico">
-        <input type="password" id="register-password" placeholder="Contraseña">
-        <button onclick="register()">Registrar</button>
+        
+        <div class="input-group">
+            <i class="input-icon">✉️</i>
+            <input type="text" id="register-email" placeholder="Correo electrónico">
+        </div>
+        
+        <div class="input-group">
+            <i class="input-icon">🔒</i>
+            <input type="password" id="register-password" placeholder="Contraseña">
+        </div>
+        
+        <div class="input-group">
+            <i class="input-icon">🔒</i>
+            <input type="password" id="register-confirm-password" placeholder="Confirmar contraseña">
+        </div>
+        
+        <button onclick="register()">Crear Cuenta</button>
         <p class="message" id="register-message"></p>
+        
+        <div class="link">
+            ¿Ya tienes una cuenta? <a href="https://diego3117683361.github.io/INICIARSESI-N/">Inicia sesión</a>
+        </div>
     </div>
 
     <!-- Contenedor para la animación de desvanecimiento -->
     <div id="overlay" class="overlay">
         <div class="overlay-content">
-            <button class="overlay-button" onclick="location.href='https://sites.google.com/view/asclepiomiembros/p%C3%A1gina-principal'">Iniciar sesión</button>
-            <p>Ya eres parte de la comunidad ASCLEPIO.</p>
+            <div class="overlay-logo">A S C L E P I O</div>
+            <p class="overlay-message">¡Registro exitoso!<br>Ya eres parte de nuestra exclusiva comunidad médica.</p>
+            <button class="overlay-button" onclick="location.href='https://diego3117683361.github.io/INICIARSESI-N/'">Acceder a la plataforma</button>
         </div>
     </div>
 
@@ -141,9 +302,28 @@
         window.register = function() {
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
             const messageElement = document.getElementById('register-message');
             const overlay = document.getElementById('overlay');
             const overlayContent = document.querySelector('.overlay-content');
+
+            // Validación básica
+            if (!email || !password || !confirmPassword) {
+                showError("Por favor, completa todos los campos.");
+                return;
+            }
+
+            // Validar que las contraseñas coincidan
+            if (password !== confirmPassword) {
+                showError("Las contraseñas no coinciden.");
+                return;
+            }
+
+            // Validar longitud mínima de contraseña
+            if (password.length < 6) {
+                showError("La contraseña debe tener al menos 6 caracteres.");
+                return;
+            }
 
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
@@ -152,11 +332,32 @@
                     setTimeout(() => {
                         overlay.classList.add('show');
                         overlayContent.classList.add('show');
-                    }, 1000); // Tiempo para el desvanecimiento
+                    }, 500);
                 })
                 .catch((error) => {
-                    messageElement.textContent = `Error: ${error.message}`;
+                    let errorMessage = "Ocurrió un error durante el registro.";
+                    switch(error.code) {
+                        case "auth/email-already-in-use":
+                            errorMessage = "Este correo ya está registrado.";
+                            break;
+                        case "auth/invalid-email":
+                            errorMessage = "El correo electrónico no es válido.";
+                            break;
+                        case "auth/weak-password":
+                            errorMessage = "La contraseña debe tener al menos 6 caracteres.";
+                            break;
+                    }
+                    showError(errorMessage);
                 });
+        }
+
+        function showError(message) {
+            const messageElement = document.getElementById('register-message');
+            messageElement.textContent = message;
+            messageElement.classList.add('shake');
+            setTimeout(() => {
+                messageElement.classList.remove('shake');
+            }, 500);
         }
     </script>
 </body>
